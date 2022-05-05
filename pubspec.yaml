@@ -40,6 +40,9 @@ dependencies:
   cloud_firestore: ^3.1.13
   line_icons: ^2.0.1
   flutter_svg: ^1.0.3
+  
+  table_calendar: ^3.0.5
+  intl: ^0.17.0
 
   card_swiper: ^2.0.3
 
