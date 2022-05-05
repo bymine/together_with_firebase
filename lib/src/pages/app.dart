@@ -4,8 +4,9 @@ import 'package:line_icons/line_icons.dart';
 import 'package:together_with_firebase/src/controllers/app_controller.dart';
 import 'package:together_with_firebase/src/pages/views/chat_view.dart';
 import 'package:together_with_firebase/src/pages/views/file_view.dart';
-import 'package:together_with_firebase/src/pages/views/home_page.dart';
-import 'package:together_with_firebase/src/pages/views/schdule_page.dart';
+import 'package:together_with_firebase/src/pages/views/home_view.dart';
+import 'package:together_with_firebase/src/pages/views/schdule_view.dart';
+
 import 'package:together_with_firebase/src/pages/views/setting_view.dart';
 
 class App extends GetView<AppController> {
