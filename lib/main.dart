@@ -4,9 +4,13 @@ import 'package:get/get.dart';
 import 'package:together_with_firebase/src/bindings/app_binding.dart';
 import 'package:together_with_firebase/src/bindings/init_binding.dart';
 import 'package:together_with_firebase/src/components/splash_screen.dart';
+import 'package:together_with_firebase/src/controllers/add_project_controller.dart';
+import 'package:together_with_firebase/src/controllers/add_schedule_controller.dart';
 import 'package:together_with_firebase/src/pages/app.dart';
+import 'package:together_with_firebase/src/pages/components/add_schedule_page.dart';
 import 'package:together_with_firebase/src/pages/login_page.dart';
 import 'package:together_with_firebase/src/pages/sign_up_page.dart';
+import 'package:together_with_firebase/src/pages/components/add_project_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,11 +27,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.grey[50],
         primarySwatch: Colors.blue,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          centerTitle: true,
           titleTextStyle: TextStyle(color: Colors.black),
           iconTheme: IconThemeData(color: Colors.black),
         ),
@@ -39,6 +43,14 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/login', page: () => const LoginPage()),
         GetPage(name: '/signUp', page: () => const SignUpPage()),
         GetPage(name: '/app', page: () => const App(), binding: AppBinding()),
+        GetPage(
+            name: '/addProject',
+            page: () => const AddProjectPage(),
+            binding: BindingsBuilder.put(() => AddProjectController())),
+        GetPage(
+            name: '/addSchedule',
+            page: () => const AddSchedulePage(),
+            binding: BindingsBuilder.put(() => AddScheduleController())),
       ],
     );
   }

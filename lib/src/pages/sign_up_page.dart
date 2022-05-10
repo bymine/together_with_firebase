@@ -20,6 +20,45 @@ class SignUpPage extends GetView<AuthController> {
           key: _formKey,
           child: Column(
             children: [
+              Stack(
+                children: [
+                  Obx(
+                    () => CircleAvatar(
+                      radius: 60,
+                      backgroundImage: controller.image.isEmpty
+                          ? Image.asset(
+                              "assets/images/sample_profile.png",
+                              scale: 0.8,
+                            ).image
+                          : Image.file(
+                              controller.image.first,
+                            ).image,
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  Positioned(
+                      bottom: -4,
+                      right: -4,
+                      child: GestureDetector(
+                        onTap: () {
+                          controller.getImage();
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 2,
+                                    spreadRadius: 2)
+                              ]),
+                          child: const Icon(LineIcons.pen),
+                        ),
+                      ))
+                ],
+              ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextInputField(

@@ -9,7 +9,8 @@ class AppBinding extends Bindings {
   void dependencies() {
     Get.put(AppController());
     Get.put(HomeController());
-    Get.put(ScheduleController());
+    Get.lazyPut(() => ScheduleController());
+
     Get.put(FileController());
   }
 }

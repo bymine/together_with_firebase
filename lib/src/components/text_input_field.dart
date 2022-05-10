@@ -7,6 +7,8 @@ class TextInputField extends StatelessWidget {
   final String? hintText;
   final bool? obscureText;
   final TextInputType? inputType;
+  final bool? readOnly;
+
   final String? Function(String?)? validator;
   const TextInputField(
       {Key? key,
@@ -16,15 +18,18 @@ class TextInputField extends StatelessWidget {
       this.obscureText,
       this.hintText,
       this.validator,
+      this.readOnly,
       this.inputType})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: readOnly ?? false,
       obscureText: obscureText ?? false,
       controller: controller,
       keyboardType: inputType,
+      maxLines: inputType == TextInputType.multiline ? null : 1,
       decoration: InputDecoration(
         prefixIcon: preFixIcon,
         suffixIcon: suffixIcon,

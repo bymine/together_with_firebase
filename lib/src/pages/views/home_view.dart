@@ -1,8 +1,12 @@
-import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:search_page/search_page.dart';
 import 'package:together_with_firebase/src/controllers/home_controller.dart';
+import 'package:together_with_firebase/src/models/project.dart';
+import 'package:together_with_firebase/src/pages/components/detail_project_page.dart';
+import 'package:together_with_firebase/src/pages/components/home_card_detail_sheet.dart';
+import 'package:together_with_firebase/src/pages/components/home_swiper_view.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
@@ -18,64 +22,85 @@ class HomeView extends GetView<HomeController> {
                 Get.toNamed('addProject');
               },
               icon: const Icon(LineIcons.plusSquare)),
-          IconButton(onPressed: () {}, icon: const Icon(LineIcons.search)),
+          IconButton(
+              onPressed: () {
+                controller.getSearchProject();
+                showSearchPage(context);
+              },
+              icon: const Icon(LineIcons.search)),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Swiper(
-              onIndexChanged: (index) {
-                controller.changeIndex(index);
-              },
-              itemCount: controller.projects.length,
-              loop: false,
-              scale: 0.8,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    image: DecorationImage(
-                        opacity: 0.8,
-                        image: Image.asset(controller.projects[index].imageUrl)
-                            .image,
-                        fit: BoxFit.fill),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(controller.projects[index].title),
-                      Text(controller.projects[index].notes)
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          Obx(
-            () => Expanded(
-              flex: 4,
-              child: Container(
-                width: double.maxFinite,
-                decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.5),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
+      body: Obx(
+        () {
+          if (controller.projects.isEmpty) {
+            return const Text("진행 중인 프로젝트가 없습니다");
+          } else {
+            return Stack(
+              children: const [
+                HomeSwiperCardsView(),
+                HomeCardDetailSheet(),
+              ],
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  void showSearchPage(BuildContext context) {
+    showSearch(
+      context: context,
+      delegate: SearchPage<Project>(
+        barTheme: Theme.of(context),
+        showItemsOnEmpty: false,
+        builder: (project) => Container(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+          child: Column(
+            children: [
+              const Divider(),
+              ListTile(
+                onTap: () {
+                  Get.to(() => DetailProjectPage(project: project));
+                },
+                title: Text(
+                  project.title,
+                  style: const TextStyle(color: Colors.black),
                 ),
-                child: Column(
-                  children: [Text(controller.currentProject.title)],
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      project.notes,
+                      maxLines: 1,
+                    ),
+                    Text("${project.userReferences.length} 명")
+                  ],
+                ),
+                trailing: Container(
+                  width: Get.width * 0.2,
+                  height: Get.width * 0.2,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      image: DecorationImage(
+                          image: NetworkImage(project.imageUrl))),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
+        filter: (project) {
+          List<String> list = [];
+          for (var element in controller.searchProjects) {
+            if (element.title.contains(project.title)) {
+              list.add(element.title);
+            }
+          }
+          return list;
+        },
+        failure: const Center(
+          child: Text('No project found'),
+        ),
+        items: controller.searchProjects,
       ),
     );
   }

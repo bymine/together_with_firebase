@@ -12,10 +12,17 @@ class ScheduleView extends GetView<ScheduleController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("5월 2022년"),
+        title: Text(controller.liveProjects.first.title),
         actions: [
           IconButton(
-              onPressed: () {}, icon: const Icon(LineIcons.calendarPlus)),
+              onPressed: () {
+                Get.toNamed("/addSchedule",
+                    arguments: controller.selectedDay,
+                    parameters: {
+                      'project_idx': controller.liveProjects.first.idx!
+                    });
+              },
+              icon: const Icon(LineIcons.calendarPlus)),
         ],
       ),
       body: SingleChildScrollView(
@@ -23,20 +30,37 @@ class ScheduleView extends GetView<ScheduleController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TableCalendar<Schedule>(
-              focusedDay: DateTime.now(),
-              firstDay: DateTime(2021),
-              lastDay: DateTime(2023),
-              headerVisible: false,
+            Obx(
+              () => TableCalendar<Schedule>(
+                focusedDay: controller.focusedDay,
+                firstDay: DateTime(2021),
+                lastDay: DateTime(2023),
+                headerVisible: false,
+                selectedDayPredicate: (day) =>
+                    isSameDay(controller.selectedDay, day),
+                onDaySelected: controller.onDaySelected,
+                startingDayOfWeek: StartingDayOfWeek.monday,
+                eventLoader: controller.initalEventLoader,
+              ),
             ),
             Obx(
               () => ListView.builder(
                 shrinkWrap: true,
-                itemCount: controller.schedules.length,
+                itemCount: controller.selectedSchedule.length,
                 itemBuilder: (context, index) {
                   return Card(
                     child: ListTile(
-                      title: Text(controller.schedules[index].title),
+                      leading: controller.selectedSchedule[index].writer != null
+                          ? CircleAvatar(
+                              backgroundImage: NetworkImage(controller
+                                  .selectedSchedule[index].writer!.profile),
+                            )
+                          : CircleAvatar(),
+                      title: Text(controller.selectedSchedule[index].title),
+                      subtitle: Text(controller
+                          .selectedSchedule[index].startTime
+                          .toDate()
+                          .toString()),
                     ),
                   );
                 },

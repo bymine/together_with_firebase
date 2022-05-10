@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:line_icons/line_icons.dart';
+import 'package:together_with_firebase/src/controllers/auth_controller.dart';
 
 class SettingView extends StatelessWidget {
   const SettingView({Key? key}) : super(key: key);
@@ -6,13 +8,21 @@ class SettingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              onPressed: () {
+                AuthController.to.signOut();
+              },
+              icon: const Icon(LineIcons.alternateSignOut))
+        ],
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: [
-              const CircleAvatar(
+            children: const [
+              CircleAvatar(
                 radius: 30,
               ),
               SizedBox(
@@ -21,33 +31,33 @@ class SettingView extends StatelessWidget {
               Text("frfr0723@gmail.com")
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
-          Text("내 활동"),
-          SizedBox(
+          const Text("내 활동"),
+          const SizedBox(
             height: 20,
           ),
           Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             color: Colors.grey.withOpacity(0.5),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Column(
-                  children: [
+                  children: const [
                     Text("2"),
                     Text("프로젝트"),
                   ],
                 ),
                 Column(
-                  children: [
+                  children: const [
                     Text("10"),
                     Text("스케줄"),
                   ],
                 ),
                 Column(
-                  children: [
+                  children: const [
                     Text("2"),
                     Text("파일"),
                   ],

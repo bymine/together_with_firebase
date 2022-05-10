@@ -59,7 +59,12 @@ class FileView extends GetView<FileController> {
                     leading: Icon(LineIcons.fileInvoice),
                     title: Text(controller.latestFiles[index].title),
                   );
-                })
+                }),
+            Container(
+              decoration: const BoxDecoration(
+                  image: DecorationImage(image: NetworkImage("www"))),
+              child: Text("hello"),
+            )
           ],
         ),
       ),
