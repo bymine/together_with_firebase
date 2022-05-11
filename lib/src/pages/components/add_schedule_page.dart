@@ -92,6 +92,7 @@ class AddSchedulePage extends GetView<AddScheduleController> {
                       minimumSize: Size(Get.width, 50)),
                   onPressed: () {
                     controller.addSchedule();
+                    Get.back();
                   },
                   child: const Text("스케줄 생성"),
                 ),

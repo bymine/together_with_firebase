@@ -8,4 +8,8 @@ class Utils {
   static String formatTime(DateTime date) {
     return DateFormat("hh:mm").format(date);
   }
+
+  static int getHashCode(DateTime key) {
+    return key.day * 1000000 + key.month * 10000 + key.year;
+  }
 }

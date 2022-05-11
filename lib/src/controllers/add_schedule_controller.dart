@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:together_with_firebase/src/controllers/auth_controller.dart';
+import 'package:together_with_firebase/src/controllers/schedule_controller.dart';
 import 'package:together_with_firebase/src/models/schedule.dart';
 
 class AddScheduleController extends GetxController {
@@ -15,10 +16,20 @@ class AddScheduleController extends GetxController {
       DateTime(Get.arguments.year, Get.arguments.month, Get.arguments.day).obs;
   Rx<DateTime> endDate =
       DateTime(Get.arguments.year, Get.arguments.month, Get.arguments.day).obs;
+  RxBool isAddComplete = false.obs;
   @override
   void onInit() {
     print(Get.parameters);
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    if (isAddComplete.value) {
+      ScheduleController.to.getAllSchedule();
+    }
+
+    super.onClose();
   }
 
   void addSchedule() {
@@ -36,6 +47,8 @@ class AddScheduleController extends GetxController {
         .doc(Get.parameters['project_idx'])
         .collection("Schedules")
         .add(addSchedule.toMap());
+
+    isAddComplete(true);
   }
 
   Future<void> selectDate(

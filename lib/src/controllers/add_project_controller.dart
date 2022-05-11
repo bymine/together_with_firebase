@@ -55,7 +55,7 @@ class AddProjectController extends GetxController {
   void createProject() async {
     var fileDownloadUrls = "";
     if (image.isNotEmpty) {
-      final ref = firebaseStorage.ref("Image").child(titleController.text);
+      final ref = firebaseStorage.ref("Project").child(titleController.text);
       await ref.putFile(image.first);
       fileDownloadUrls = await ref.getDownloadURL();
     }
