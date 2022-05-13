@@ -25,10 +25,6 @@ class AddProjectController extends GetxController {
   RxBool isAddComplete = false.obs;
   RxBool isLock = true.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   @override
   void onClose() {

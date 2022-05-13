@@ -17,11 +17,6 @@ class AddScheduleController extends GetxController {
   Rx<DateTime> endDate =
       DateTime(Get.arguments.year, Get.arguments.month, Get.arguments.day).obs;
   RxBool isAddComplete = false.obs;
-  @override
-  void onInit() {
-    print(Get.parameters);
-    super.onInit();
-  }
 
   @override
   void onClose() {

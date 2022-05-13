@@ -32,6 +32,7 @@ class Schedule {
       QueryDocumentSnapshot<Map<String, dynamic>> document) {
     var json = document.data();
     return Schedule(
+        id: document.id,
         title: json['schedule_title'],
         notes: json['schedule_notes'],
         startTime: json['schedule_start_time'],
