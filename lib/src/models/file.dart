@@ -74,10 +74,12 @@ class Folder {
   Color color;
   IconData icon;
   double folderSize;
+  List<FileData> files;
 
   Folder(
       {required this.fileMap,
       required this.color,
       required this.icon,
-      required this.folderSize});
+      required this.folderSize,
+      required this.files});
 }

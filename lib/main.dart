@@ -7,10 +7,10 @@ import 'package:together_with_firebase/src/components/splash_screen.dart';
 import 'package:together_with_firebase/src/controllers/add_project_controller.dart';
 import 'package:together_with_firebase/src/controllers/add_schedule_controller.dart';
 import 'package:together_with_firebase/src/pages/app.dart';
-import 'package:together_with_firebase/src/pages/components/add_schedule_page.dart';
 import 'package:together_with_firebase/src/pages/login_page.dart';
 import 'package:together_with_firebase/src/pages/sign_up_page.dart';
-import 'package:together_with_firebase/src/pages/components/add_project_page.dart';
+import 'package:together_with_firebase/src/pages/views/add_project_page.dart';
+import 'package:together_with_firebase/src/pages/views/add_schedule_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

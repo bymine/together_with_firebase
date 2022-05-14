@@ -14,29 +14,37 @@ import 'package:together_with_firebase/src/models/project.dart';
 
 class FileController extends GetxController {
   static FileController get to => Get.find();
+
+  // file view latest file ui
   RxList<FileData> latestFiles = RxList([]);
+
+  // load project file from firebase
   RxList<FileData> allFiles = RxList([]);
+
+  // live project list from home controller
   RxList<Project> liveProjects = RxList([]);
+
   late Rx<Project> currentproject = liveProjects.first.obs;
+
   RxList<Folder> folders = RxList([]);
   Rx<File> uploadFile = File("").obs;
-
   RxBool isLoadComplete = false.obs;
+
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   String get fileName => basename(uploadFile.value.path);
-  TextEditingController fileTitleController = TextEditingController();
 
+  TextEditingController fileTitleController = TextEditingController();
   @override
   void onInit() {
     liveProjects.value = HomeController.to.projects;
-
     getFilesFromDatabase();
     super.onInit();
   }
 
   void changeProject(Project value) {
     currentproject(value);
+    isLoadComplete(false);
     getFilesFromDatabase();
   }
 
@@ -69,7 +77,9 @@ class FileController extends GetxController {
           color: Colors.green,
           icon: LineIcons.imageFile,
           folderSize: calculateFolderSize(
-              allFiles.where((p0) => p0.fileType == FileExt.photos).toList())),
+              allFiles.where((p0) => p0.fileType == FileExt.photos).toList()),
+          files:
+              allFiles.where((p0) => p0.fileType == FileExt.photos).toList()),
       Folder(
           fileMap: {
             "미디어": allFiles
@@ -81,7 +91,8 @@ class FileController extends GetxController {
           color: Colors.orange,
           icon: LineIcons.videoFile,
           folderSize: calculateFolderSize(
-              allFiles.where((p0) => p0.fileType == FileExt.media).toList())),
+              allFiles.where((p0) => p0.fileType == FileExt.media).toList()),
+          files: allFiles.where((p0) => p0.fileType == FileExt.media).toList()),
       Folder(
           fileMap: {
             "문서": allFiles
@@ -92,9 +103,10 @@ class FileController extends GetxController {
           },
           color: Colors.purple,
           icon: LineIcons.fileInvoice,
-          folderSize: calculateFolderSize(allFiles
-              .where((p0) => p0.fileType == FileExt.document)
-              .toList())),
+          folderSize: calculateFolderSize(
+              allFiles.where((p0) => p0.fileType == FileExt.document).toList()),
+          files:
+              allFiles.where((p0) => p0.fileType == FileExt.document).toList()),
     ];
   }
 

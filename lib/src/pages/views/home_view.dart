@@ -4,9 +4,9 @@ import 'package:line_icons/line_icons.dart';
 import 'package:search_page/search_page.dart';
 import 'package:together_with_firebase/src/controllers/home_controller.dart';
 import 'package:together_with_firebase/src/models/project.dart';
-import 'package:together_with_firebase/src/pages/components/detail_project_page.dart';
 import 'package:together_with_firebase/src/pages/components/home_card_detail_sheet.dart';
 import 'package:together_with_firebase/src/pages/components/home_swiper_view.dart';
+import 'package:together_with_firebase/src/pages/views/detail_project_page.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
