@@ -1,12 +1,12 @@
 import 'package:intl/intl.dart';
 
 class Utils {
-  static String formatDate(DateTime date) {
-    return DateFormat("yyyy/MM/dd").format(date);
-  }
-
   static String formatTime(DateTime date) {
     return DateFormat("hh:mm").format(date);
+  }
+
+  static String formatDate(DateTime date, String seperator) {
+    return DateFormat("yyyy${seperator}MM${seperator}dd").format(date);
   }
 
   static int getHashCode(DateTime key) {

@@ -56,7 +56,9 @@ dependencies:
   search_page: ^2.0.0+1
   file_picker: ^4.5.1
   path: ^1.8.0
-
+  filesize: ^2.0.1
+  percent_indicator: ^4.2.2
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

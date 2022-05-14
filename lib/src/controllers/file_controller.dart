@@ -11,51 +11,118 @@ import 'package:together_with_firebase/src/controllers/auth_controller.dart';
 import 'package:together_with_firebase/src/controllers/home_controller.dart';
 import 'package:together_with_firebase/src/models/file.dart';
 import 'package:together_with_firebase/src/models/project.dart';
-import 'package:together_with_firebase/src/pages/views/file_view.dart';
 
 class FileController extends GetxController {
   static FileController get to => Get.find();
   RxList<FileData> latestFiles = RxList([]);
-  Map<String, double> fileTypeMap = {"이미지": 7, "문서": 3, "비디오": 5};
+  RxList<FileData> allFiles = RxList([]);
   RxList<Project> liveProjects = RxList([]);
   late Rx<Project> currentproject = liveProjects.first.obs;
-
+  RxList<Folder> folders = RxList([]);
   Rx<File> uploadFile = File("").obs;
+
+  RxBool isLoadComplete = false.obs;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   String get fileName => basename(uploadFile.value.path);
   TextEditingController fileTitleController = TextEditingController();
+
   @override
   void onInit() {
     liveProjects.value = HomeController.to.projects;
 
-    getLatestFiles();
+    getFilesFromDatabase();
     super.onInit();
   }
 
   void changeProject(Project value) {
     currentproject(value);
+    getFilesFromDatabase();
   }
 
-  void getLatestFiles() {}
+  void getFilesFromDatabase() async {
+    var fileData = await firestore
+        .collection("Projects")
+        .doc(currentproject.value.idx!)
+        .collection("Files")
+        .get();
+    allFiles.value = fileData.docs.map((e) => FileData.fromJson(e)).toList();
+    sortLatestFromAll();
+    classifyFolderType();
+    isLoadComplete(true);
+  }
 
-  List<Folder> folders = [
-    Folder(
-        title: "Photos",
-        items: 5,
-        color: Colors.green,
-        icon: LineIcons.imageFile),
-    Folder(
-        title: "Media",
-        items: 8,
-        color: Colors.yellow,
-        icon: LineIcons.videoFile),
-    Folder(
-        title: "Documents",
-        items: 3,
-        color: Colors.red,
-        icon: LineIcons.fileInvoice),
-  ];
+  void sortLatestFromAll() {
+    latestFiles.value = allFiles;
+  }
+
+  void classifyFolderType() {
+    folders.value = [
+      Folder(
+          fileMap: {
+            "이미지": allFiles
+                .where((p0) => p0.fileType == FileExt.photos)
+                .toList()
+                .length
+                .toDouble()
+          },
+          color: Colors.green,
+          icon: LineIcons.imageFile,
+          folderSize: calculateFolderSize(
+              allFiles.where((p0) => p0.fileType == FileExt.photos).toList())),
+      Folder(
+          fileMap: {
+            "미디어": allFiles
+                .where((p0) => p0.fileType == FileExt.media)
+                .toList()
+                .length
+                .toDouble()
+          },
+          color: Colors.orange,
+          icon: LineIcons.videoFile,
+          folderSize: calculateFolderSize(
+              allFiles.where((p0) => p0.fileType == FileExt.media).toList())),
+      Folder(
+          fileMap: {
+            "문서": allFiles
+                .where((p0) => p0.fileType == FileExt.document)
+                .toList()
+                .length
+                .toDouble()
+          },
+          color: Colors.purple,
+          icon: LineIcons.fileInvoice,
+          folderSize: calculateFolderSize(allFiles
+              .where((p0) => p0.fileType == FileExt.document)
+              .toList())),
+    ];
+  }
+
+  double calculateFolderSize(List<FileData> list) {
+    double count = 0;
+    for (var element in list) {
+      count += element.mbSize;
+    }
+    return count;
+  }
+
+  Map<String, double> get folderMap {
+    Map<String, double> map = {};
+
+    for (var folder in folders) {
+      map.addAll(folder.fileMap);
+    }
+
+    return map;
+  }
+
+  List<Color> get folderColorList {
+    List<Color> color = [];
+    for (var folder in folders) {
+      color.add(folder.color.withOpacity(0.6));
+    }
+    return color;
+  }
 
   void selectFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
@@ -72,12 +139,15 @@ class FileController extends GetxController {
         .child(fileName);
     await ref.putFile(uploadFile.value);
     var fileDownloadUrls = await ref.getDownloadURL();
+    int sizeInBytes = uploadFile.value.lengthSync();
+    double sizeInMb = sizeInBytes / (1024 * 1024);
 
     var reference = firestore.collection("Users").doc(AuthController.to.uid);
     var file = FileData(
         title: fileTitleController.text,
         fileType: FileExt.photos,
         date: DateTime.now(),
+        mbSize: sizeInMb,
         downloadUrl: fileDownloadUrls,
         writerReference: reference);
 

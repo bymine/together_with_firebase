@@ -23,14 +23,16 @@ class AddFilePage extends GetView<FileController> {
             const SizedBox(
               height: 36,
             ),
-            TextInputField(
-              controller: null,
-              hintText: controller.fileName,
-              suffixIcon: IconButton(
-                  onPressed: () {
-                    controller.selectFile();
-                  },
-                  icon: const Icon(LineIcons.fileUpload)),
+            Obx(
+              () => TextInputField(
+                controller: null,
+                hintText: controller.fileName,
+                suffixIcon: IconButton(
+                    onPressed: () {
+                      controller.selectFile();
+                    },
+                    icon: const Icon(LineIcons.fileUpload)),
+              ),
             ),
             const SizedBox(
               height: 36,

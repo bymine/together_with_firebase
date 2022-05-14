@@ -35,7 +35,7 @@ class AddSchedulePage extends GetView<AddScheduleController> {
               ),
               TextInputField(
                 controller: null,
-                hintText: Utils.formatDate(controller.startDate.value),
+                hintText: Utils.formatDate(controller.startDate.value, "/"),
                 readOnly: true,
                 suffixIcon: IconButton(
                   onPressed: () {
