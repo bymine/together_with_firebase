@@ -18,7 +18,7 @@ class FileView extends GetView<FileController> {
           title: Obx(
             () => DropdownButton(
               isExpanded: true,
-              value: controller.currentproject.value,
+              value: controller.currentProject.value,
               underline: Container(),
               items: controller.liveProjects
                   .map(
@@ -28,9 +28,7 @@ class FileView extends GetView<FileController> {
                     ),
                   )
                   .toList(),
-              onChanged: (Project? value) {
-                controller.changeProject(value!);
-              },
+              onChanged: (Project? value) => controller.changeProject(value!),
             ),
           ),
           actions: [

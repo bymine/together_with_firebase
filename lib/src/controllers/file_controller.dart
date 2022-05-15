@@ -24,7 +24,8 @@ class FileController extends GetxController {
   // live project list from home controller
   RxList<Project> liveProjects = RxList([]);
 
-  late Rx<Project> currentproject = liveProjects.first.obs;
+  late Rx<Project> currentProject = liveProjects[currentProjectIdx.value].obs;
+  late Rx<int> currentProjectIdx = 0.obs;
 
   RxList<Folder> folders = RxList([]);
   Rx<File> uploadFile = File("").obs;
@@ -38,20 +39,24 @@ class FileController extends GetxController {
   @override
   void onInit() {
     liveProjects.value = HomeController.to.projects;
+    currentProjectIdx = HomeController.to.currentIndex;
+    print(currentProjectIdx);
+
     getFilesFromDatabase();
     super.onInit();
   }
 
   void changeProject(Project value) {
-    currentproject(value);
+    currentProject(value);
     isLoadComplete(false);
     getFilesFromDatabase();
+    HomeController.to.changeIndex(liveProjects.indexOf(value));
   }
 
   void getFilesFromDatabase() async {
     var fileData = await firestore
         .collection("Projects")
-        .doc(currentproject.value.idx!)
+        .doc(currentProject.value.idx!)
         .collection("Files")
         .get();
     allFiles.value = fileData.docs.map((e) => FileData.fromJson(e)).toList();
@@ -147,7 +152,7 @@ class FileController extends GetxController {
   void uploadFileToDatabase() async {
     final ref = firebaseStorage
         .ref("Files")
-        .child(currentproject.value.idx!)
+        .child(currentProject.value.idx!)
         .child(fileName);
     await ref.putFile(uploadFile.value);
     var fileDownloadUrls = await ref.getDownloadURL();
@@ -165,7 +170,7 @@ class FileController extends GetxController {
 
     firestore
         .collection("Projects")
-        .doc(currentproject.value.idx!)
+        .doc(currentProject.value.idx!)
         .collection("Files")
         .add(file.toMap());
   }

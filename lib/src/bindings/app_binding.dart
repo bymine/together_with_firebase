@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:together_with_firebase/src/controllers/app_controller.dart';
+import 'package:together_with_firebase/src/controllers/chat_controller.dart';
 import 'package:together_with_firebase/src/controllers/home_controller.dart';
 import 'package:together_with_firebase/src/controllers/schedule_controller.dart';
 import 'package:together_with_firebase/src/controllers/file_controller.dart';
@@ -11,5 +12,6 @@ class AppBinding extends Bindings {
     Get.put(HomeController());
     Get.lazyPut(() => ScheduleController());
     Get.lazyPut(() => FileController());
+    Get.lazyPut(() => ChatController());
   }
 }
