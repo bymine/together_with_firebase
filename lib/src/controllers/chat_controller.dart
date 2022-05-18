@@ -9,30 +9,60 @@ import 'package:together_with_firebase/src/models/users.dart';
 class ChatController extends GetxController {
   static ChatController get to => Get.find();
 
-  RxList<Project> projects = RxList([]);
+  //RxList<Project> projects = RxList([]);
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   RxList<Message> messages = RxList([]);
+
+  RxList<Chat> chatRooms = RxList([]);
 
   RxInt currentIndex = 0.obs;
 
   TextEditingController messageController = TextEditingController();
 
+  RxBool isLoadRoom = false.obs;
+
   RxBool isLoadComplete = false.obs;
   @override
   void onInit() {
-    projects = HomeController.to.projects;
-
+    //projects = HomeController.to.projects;
+    loadChatThumbnail();
     super.onInit();
   }
 
+  void loadChatThumbnail() {
+    for (var project in HomeController.to.projects) {
+      chatRooms.add(Chat(
+          project: project,
+          thumbNail: ChatThumbNail(lastMessage: null, date: null).obs));
+    }
+
+    for (var room in chatRooms) {
+      firestore
+          .collection("Projects")
+          .doc(room.project.idx)
+          .collection("Chats")
+          .orderBy("message_date")
+          .limitToLast(1)
+          .snapshots()
+          .listen((event) {
+        if (event.docs.isNotEmpty) {
+          room.thumbNail.value = ChatThumbNail.fromJson(event.docs.first);
+          room.thumbNail.refresh();
+        }
+      });
+    }
+    isLoadRoom(true);
+    //Future.delayed(Duration(microseconds: 1)).then((value) => isLoadRoom(true));
+  }
+
   loadMessages(int index) async {
-    if (projects.isNotEmpty) {
+    if (chatRooms.isNotEmpty) {
       currentIndex(index);
     }
 
     firestore
         .collection("Projects")
-        .doc(projects[currentIndex.value].idx!)
+        .doc(chatRooms[currentIndex.value].project.idx)
         .collection("Chats")
         .orderBy("message_date")
         .snapshots()
@@ -44,8 +74,9 @@ class ChatController extends GetxController {
 
   void formatting() {
     for (var message in messages) {
-      message.writer = projects[currentIndex.value].userDatas[
-          projects[currentIndex.value]
+      message.writer = chatRooms[currentIndex.value].project.userDatas[
+          chatRooms[currentIndex.value]
+              .project
               .userReferences
               .indexOf(message.writerReference)];
     }
@@ -59,7 +90,7 @@ class ChatController extends GetxController {
     if (messageController.text.isNotEmpty) {
       firestore
           .collection("Projects")
-          .doc(projects[currentIndex.value].idx!)
+          .doc(chatRooms[currentIndex.value].project.idx)
           .collection("Chats")
           .add(Message(
                   title: messageController.text,
@@ -69,6 +100,28 @@ class ChatController extends GetxController {
 
       messageController.clear();
     }
+  }
+}
+
+class Chat {
+  Project project;
+  Rx<ChatThumbNail> thumbNail;
+
+  Chat({required this.project, required this.thumbNail});
+}
+
+class ChatThumbNail {
+  String? lastMessage;
+  DateTime? date;
+
+  ChatThumbNail({this.lastMessage, this.date});
+
+  factory ChatThumbNail.fromJson(
+      QueryDocumentSnapshot<Map<String, dynamic>> documnet) {
+    var json = documnet.data();
+    return ChatThumbNail(
+        lastMessage: json['message_title'],
+        date: json['message_date'].toDate());
   }
 }
 

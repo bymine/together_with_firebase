@@ -50,44 +50,8 @@ class DetailChatPage extends GetView<ChatController> {
                     child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: controller.messages.length,
-                        itemBuilder: (context, index) => ListTile(
-                              leading: controller.messages[index].writer!.uid !=
-                                      AuthController.to.uid
-                                  ? Container(
-                                      width: 30,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          image: DecorationImage(
-                                              image: CachedNetworkImageProvider(
-                                                  controller.messages[index]
-                                                      .writer!.profile))),
-                                    )
-                                  : null,
-                              title: controller.messages[index].writer!.uid ==
-                                      AuthController.to.uid
-                                  ? Container(
-                                      padding: EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey.shade200,
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(20),
-                                              topRight: Radius.circular(20),
-                                              bottomLeft: Radius.circular(20))),
-                                      child: Wrap(
-                                        children: [
-                                          Text(
-                                              controller.messages[index].title),
-                                        ],
-                                      ),
-                                    )
-                                  : Container(
-                                      color: const Color(0xffD7DDF3),
-                                      child: Text(
-                                          controller.messages[index].title),
-                                    ),
-                              trailing: Text(DateFormat('hh:mm')
-                                  .format(controller.messages[index].date)),
+                        itemBuilder: (context, index) => MessageWidget(
+                              message: controller.messages[index],
                             )),
                   );
                 } else {
@@ -119,6 +83,77 @@ class DetailChatPage extends GetView<ChatController> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class MessageWidget extends StatelessWidget {
+  final Message message;
+  const MessageWidget({Key? key, required this.message}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      horizontalTitleGap: 3,
+      contentPadding: EdgeInsets.all(10),
+      leading: message.writer!.uid != AuthController.to.uid
+          ? Column(
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: CachedNetworkImageProvider(
+                              message.writer!.profile))),
+                ),
+                Text(message.writer!.name)
+              ],
+            )
+          : null,
+      title: message.writer!.uid != AuthController.to.uid
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  constraints: BoxConstraints(maxWidth: Get.height * 0.4),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Text(
+                    message.title,
+                  ),
+                ),
+                Text(DateFormat('hh:mm').format(message.date))
+              ],
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: const BoxDecoration(
+                    color: Color(0xffD7DDF3),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
+                    ),
+                  ),
+                  child: Text(message.title),
+                ),
+                Text(DateFormat('hh:mm').format(message.date))
+              ],
+            ),
     );
   }
 }

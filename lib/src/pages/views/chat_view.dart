@@ -13,70 +13,87 @@ class ChatView extends GetView<ChatController> {
       appBar: AppBar(
         title: const Text("Chat Room"),
       ),
-      body: ListView.builder(
-          itemCount: controller.projects.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                Get.to(() => const DetailChatPage(),
-                    arguments: controller.projects[index]);
-                ChatController.to.loadMessages(index);
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        image: DecorationImage(
-                          image: CachedNetworkImageProvider(
-                              controller.projects[index].imageUrl),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
+      body: Obx(
+        () {
+          if (controller.isLoadRoom.value) {
+            return ListView.builder(
+                itemCount: controller.chatRooms.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      Get.to(() => const DetailChatPage(),
+                          arguments: controller.chatRooms[index].project);
+                      ChatController.to.loadMessages(index);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          RichText(
-                            text: TextSpan(
-                              text: controller.projects[index].title,
-                              style: const TextStyle(color: Colors.black),
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              image: DecorationImage(
+                                image: CachedNetworkImageProvider(controller
+                                    .chatRooms[index].project.imageUrl),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextSpan(
-                                    text:
-                                        " ${controller.projects[index].userDatas.length}명",
-                                    style:
-                                        const TextStyle(color: Colors.black54))
+                                RichText(
+                                  text: TextSpan(
+                                    text: controller
+                                        .chatRooms[index].project.title,
+                                    style: const TextStyle(color: Colors.black),
+                                    children: [
+                                      TextSpan(
+                                          text:
+                                              " ${controller.chatRooms[index].project.userDatas.length}명",
+                                          style: const TextStyle(
+                                              color: Colors.black54))
+                                    ],
+                                  ),
+                                ),
+                                Obx(() => Text(
+                                    controller.chatRooms[index].thumbNail.value
+                                            .lastMessage ??
+                                        "",
+                                    maxLines: 1,
+                                    style: TextStyle(color: Colors.black54)))
                               ],
                             ),
                           ),
-                          const Text("helloasdasdsadasdasdasdasdasdas",
-                              style: TextStyle(color: Colors.black54))
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            children: [
+                              Obx(() => Text(
+                                  controller
+                                      .chatRooms[index].thumbNail.value.date
+                                      .toString(),
+                                  style: TextStyle(color: Colors.black54)))
+                            ],
+                          )
                         ],
                       ),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Column(
-                      children: const [
-                        Text("12:24", style: TextStyle(color: Colors.black54))
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            );
-          }),
+                  );
+                });
+          } else {
+            return CircularProgressIndicator();
+          }
+        },
+      ),
     );
   }
 }
